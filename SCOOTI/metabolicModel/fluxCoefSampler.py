@@ -243,16 +243,16 @@ class FluxSampler:
         print('Metadata saved at:', filename)
         return filename
 
-class coefSampler:
-        """Sample coefficients or single-objective coefficients
+class coefsampler:
+        """sample coefficients or single-objective coefficients
 
-        The function will output and save the table of coefficients for 
+        the function will output and save the table of coefficients for 
         a list of metabolites (objectives).
 
-        Attributes
+        attributes
         ----------
         single_obj : list,
-            a list of metabolites. The name is better to match the name used in modeling.
+            a list of metabolites. the name is better to match the name used in modeling.
         sample_num : int,
             the number of samples if running coefficient sampling.
         save_path : str,
@@ -264,9 +264,9 @@ class coefSampler:
             "random" for random_objective_coefficients;
             otherwise, single_objective_coefficients
 
-        Returns
+        returns
         -------
-        df : pandas.DataFrame,
+        df : pandas.dataframe,
             coefficients table with metabolites as index and samples as columns
 
         """
@@ -283,49 +283,49 @@ class coefSampler:
 
         def random_objective_coefficients(self):
             # sampling and save
-            df = pd.DataFrame(np.random.rand(len(self.single_obj), self.sample_num))
+            df = pd.dataframe(np.random.rand(len(self.single_obj), self.sample_num))
             df.index = single_obj
-            df.columns = [f'Sample_{ind}' for ind in np.arange(len(df.columns))]
-            df.to_csv(self.save_path+'/'+'samplingObjCoef_{self.suffix}.csv')
+            df.columns = [f'sample_{ind}' for ind in np.arange(len(df.columns))]
+            df.to_csv(self.save_path+'/'+'samplingobjcoef_{self.suffix}.csv')
             return df
 
         def single_objective_coefficients(self):
             # sampling and save
-            df = pd.DataFrame(
+            df = pd.dataframe(
                     np.eye(len(self.single_obj)),
                     columns=self.single_obj,
                     index=self.single_obj)
-            df.to_csv(self.save_path+'/'+f'singleObj_{self.suffix}.csv')
+            df.to_csv(self.save_path+'/'+f'singleobj_{self.suffix}.csv')
             return df
 
 
 if __name__ == "__main__":
     
     # load flux sampler
-    sampler = FluxSampler(
-        GEM_path="./SCOOTI/SCOOTI/metabolicModel/GEMs/Shen2019.mat",
-        objective_path="./SCOOTI/SCOOTI/metabolicModel/obj52_metabolites_shen2019.csv",
-        medium_path="./SCOOTI/SCOOTI/metabolicModel/FINAL_MEDIUM_MAP_RECON1.xlsx",
-        medium_name='DMEMF12'
+    sampler = fluxsampler(
+        gem_path="./scooti/scooti/metabolicmodel/gems/shen2019.mat",
+        objective_path="./scooti/scooti/metabolicmodel/obj52_metabolites_shen2019.csv",
+        medium_path="./scooti/scooti/metabolicmodel/final_medium_map_recon1.xlsx",
+        medium_name='dmemf12'
     )
     gem_tmp = sampler.build_objective_candidates()
     
     #
     # load coefficient sampler
-    coef = coefSampler(
-            single_obj="./SCOOTI/SCOOTI/metabolicModel/allMets_metabolites_shen2019.csv",
+    coef = coefsampler(
+            single_obj="./scooti/scooti/metabolicmodel/allmets_metabolites_shen2019.csv",
             sample_num=100,
-            save_path="/nfs/turbo/umms-csriram/daweilin/fluxPrediction/RandomObjCoef/synthetic_data/",
-            suffix="allMets_recon1",
+            save_path="/nfs/turbo/umms-csriram/daweilin/fluxprediction/randomobjcoef/synthetic_data/",
+            suffix="allmets_recon1",
             func="single"
             )
-    coef_path = pd.read_csv("/nfs/turbo/umms-csriram/daweilin/fluxPrediction/RandomObjCoef/synthetic_data/singleObjCoef_singleObj.csv")
+    coef_path = pd.read_csv("/nfs/turbo/umms-csriram/daweilin/fluxprediction/randomobjcoef/synthetic_data/singleobjcoef_singleobj.csv")
 
     if coef_path:
         obj_coef = pd.read_csv(coef_path, index_col=0)
         sampler.assign_multi_objectives(obj_coef, gem_tmp, sample_num=5,
-            rootpath="/nfs/turbo/umms-csriram/daweilin/fluxPrediction/unconstrained_models/fluxSampling_test/")
+            rootpath="/nfs/turbo/umms-csriram/daweilin/fluxprediction/unconstrained_models/fluxsampling_test/")
     else:
         sampler.assign_single_objectives(gem_tmp, sample_num=5,
-            rootpath="/nfs/turbo/umms-csriram/daweilin/fluxPrediction/unconstrained_models/fluxSampling_test/")
+            rootpath="/nfs/turbo/umms-csriram/daweilin/fluxprediction/unconstrained_models/fluxsampling_test/")
 

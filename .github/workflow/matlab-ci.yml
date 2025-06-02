@@ -1,0 +1,21 @@
+name: MATLAB + Gurobi CI on HPC
+
+on: [push]
+
+jobs:
+  hpc-test:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Load modules and run tests
+        shell: bash -l {0}
+        run: |
+          module load matlab gurobi
+          matlab -nodisplay -nosplash -r "addpath(genpath(fullfile(pwd, 'metabolicModel'))); \
+                                          config = jsondecode(fileread('./examples/run_flux/constrained_demo_config.json')); \
+                                          validate_config(config); \  
+                                          multiObj_CBM(config); \
+                                          exit;"
+

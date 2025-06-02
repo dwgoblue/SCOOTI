@@ -23,7 +23,8 @@ parser.add_argument("--savePath", help="Root path to save regression models")
 parser.add_argument(
         "--kappaArr",
         default='10,1,0.1,0.01,0.001',
-        help="Parameter kappa for CFR; 0 for non-CFR models")
+        help="Parameter kappa for CFR; 0 for non-CFR models"
+        )
 parser.add_argument(
         "--rhoArr",
         default='10,1,0.1,0.01,0.001',
