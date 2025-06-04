@@ -20,7 +20,7 @@ from sklearn.manifold import TSNE
 from scipy.spatial import distance
 from scipy.cluster import hierarchy
 #from clustering_toolkit import ClusteringToolkit  # Assuming you've saved it as clustering_toolkit.py
-from SCOOTI.GeneralMethods.MatplotProp import CanvasStyle
+from SCOOTI.utils.MatplotProp import CanvasStyle
 
 
 # Add statistical annotations

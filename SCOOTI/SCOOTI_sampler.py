@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 import os, sys
 from tqdm import tqdm
-from SCOOTI.metabolicModel import fluxCoefSampler
+from SCOOTI.pyfluxModel.fluxModel import modelSetter, coefsampler
 import argparse
 
 
@@ -27,10 +27,11 @@ parser.add_argument("--func", help="Function used to generate coefficients", def
 parser.add_argument("--coef_path", help="path to access the coefficients of objectives", default='')
 
 
-
+# parse arguments
+args = parser.parse_args()
 if args.datatype=='flux':
     # load flux sampler
-    sampler = FluxSampler(
+    sampler = modelSetter(
         GEM_path=args.GEM_path,
         objective_path=args.objective_path,
         medium_path=args.medium_path,
@@ -54,3 +55,5 @@ else: # args.datatype=='coef'
             suffix=args.suffix,
             func=args.func
             )
+
+

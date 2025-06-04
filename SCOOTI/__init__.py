@@ -21,9 +21,7 @@ from scipy.stats import mannwhitneyu
 config = cobra.Configuration()
 config.solver = "glpk"
 
-
-#from . import GeneralMethods
-from .GeneralMethods import *
+from .pyfluxModel import *
 from .regressionAnalyzer import *
 from .metObjAnalyzer import *
 from .regressors import *

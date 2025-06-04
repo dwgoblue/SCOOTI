@@ -20,8 +20,8 @@ module load gurobi
 
 # parser
 datatype='flux'
-GEM_path='./SCOOTI/SCOOTI/metabolicModel/GEMs/Shen2019.mat'
-objective_path='./SCOOTI/SCOOTI/metabolicModel/allMets_metabolites_shen2019.csv'
+GEM_path='./SCOOTI/SCOOTI/metabolicModel/GEMs/Shen2019.xml'
+objective_path='./SCOOTI/SCOOTI/metabolicModel/GEMs/obj52_metabolites_shen2019.csv'
 sample_num=100
 rootpath='/nfs/turbo/umms-csriram/daweilin/fluxPrediction/unconstrained_models/fluxSampling_test/'
 medium_path='./SCOOTI/SCOOTI/metabolicModel/FINAL_MEDIUM_MAP_RECON1.xlsx'
