@@ -33,7 +33,7 @@ class modelSetter:
         objectives (pd.DataFrame): Objective metabolites.
         objective_candidates (list): List of reactions used as metabolic objectives.
     """
-    def __init__(self, GEM_path, objective_path, medium_path, medium_name, mapping_file='./GEMs/recon1_genes.json'):
+    def __init__(self, GEM_path, objective_path, medium_path, medium_name, mapping_file='./SCOOTI/SCOOTI/metabolicModel/GEMs/recon1_genes.json'):
         self.GEM_path = GEM_path
         self.objective_path = objective_path
         self.medium_path = medium_path
@@ -273,6 +273,7 @@ class modelSetter:
             gem_tmp.objective = candidate
             self.add_soft_flux_penalty(gem_tmp, excluded_rxns=[candidate])
     
+            print('testing', gem_tmp.optimize().fluxes.sum())
             if sample_flux:
                 samples = pd.DataFrame(sample(gem_tmp, sample_num, processes=sample_num))
                 samples = samples.sample(frac=1)
@@ -282,8 +283,11 @@ class modelSetter:
                 samples.index = [r.id for r in gem_tmp.reactions]
             else:
                 sol = gem_tmp.optimize()
-                samples = pd.DataFrame(sol.fluxes, columns=['flux'], index=[r.id for r in gem_tmp.reactions])
-            print(samples.head())
+                samples = pd.DataFrame(sol.fluxes)
+                samples.columns = ['flux']
+            print(candidate, samples.head())
+            obj_c = np.zeros(len(self.objectives['metabolites']))
+            obj_c[self.objectives['metabolites'].to_numpy() == candidate] = 1.0
             for col in samples.columns:
                 out_path = self.save_flux_sample(
                     sample_vector=samples[col],
@@ -328,7 +332,8 @@ class modelSetter:
                 samples = samples.T
             else:
                 sol = gem_tmp.optimize()
-                samples = pd.DataFrame(sol.fluxes, columns=['flux'], index=[r.id for r in gem_tmp.reactions])
+                samples = pd.DataFrame(sol.fluxes)
+                samples.columns = ['flux']
     
             print(samples.head())
             for s in tqdm(samples.columns):
@@ -344,7 +349,7 @@ class modelSetter:
                     data_id=data_id
                 )
                 
-    def convert_gene_list(self, mapping_file='./GEMs/recon1_genes.json'):
+    def convert_gene_list(self, on_list, off_list, mapping_file='./SCOOTI/SCOOTI/metabolicModel/GEMs/recon1_genes.json'):
         # CRITICAL: Make sure the genes in the on_list and off_list are present in the model.
         # Most of the time, the genes in the model are in the form of bigg ids, e.g. 'b0001'.
         # If you have a list of gene names, you need to convert them to bigg ids.
@@ -453,7 +458,9 @@ class MultiConstraintModelSetter(modelSetter):
             dwfile_suffix='dwgenes',
             rootpath='./',
             sample_flux=False,
-            para_config={1:{'rho':0.01, 'epsilon1':0.001, 'kappa':0.01, 'epsilon2':0.001}},
+            obj_coef=None,
+            sample_num=20,
+            para_config={0:{'rho':0.01, 'epsilon1':0.001, 'kappa':0.01, 'epsilon2':0.001}},
             ):
         """
         Apply multiple sets of CFR constraints defined in up/down gene CSVs.
